@@ -3,55 +3,85 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\Hash;
+use App\Models\User; // Import model User
 
 class AuthController extends Controller
 {
     public function showLoginForm()
     {
-        return view('auth.login');
+        return view('login'); 
     }
 
     public function showRegisterForm()
     {
-        return view('auth.register');
+        return view('auth.register'); // Pastikan view ini ada
     }
 
-    public function login(Request $request)
+    public function loggedin_user(Request $request)
     {
-        $response = Http::post("http://127.0.0.1:8000/api/login", [
-            'name' => $request->name,
-            'password' => $request->password,
+        // Validasi input
+        $request->validate([
+            'email' => 'required|string|email',
+            'password' => 'required|string',
         ]);
 
-        if ($response->ok()) {
-            $data = $response->json();
+        // Buat key unik untuk pembatasan login
+        $key = Str::lower($request->input('email')) . '|' . $request->ip();
 
-            $token = $data['token'] ?? null;
-
-            if ($token) {
-                return view('auth.save_token', ['token' => $token]);
-            }
-
-            return back()->withErrors(['Token missing from response.']);
-            //return redirect()->route('dashboard')->with('success', 'Login successful!');
+        // Cek apakah ada terlalu banyak percobaan login
+        if (RateLimiter::tooManyAttempts($key, 5)) {
+            $remainingTime = RateLimiter::availableIn($key);
+            return redirect()->back()->with('gagal', 'Terlalu banyak percobaan login. Coba lagi dalam ' . $remainingTime . ' detik.');
         }
 
-        return back()->withErrors(['Invalid credentials']);
+        // Ambil pengguna dari tabel users menggunakan model User berdasarkan email
+        $user = User::where('email', $request->input('email'))->first();
+
+        // Periksa apakah pengguna ada dan password cocok
+        // Menggunakan Auth::attempt adalah cara terbaik di Laravel
+        if (Auth::attempt(['email' => $request->input('email'), 'password' => $request->input('password')])) {
+            // Jika login berhasil
+            RateLimiter::clear($key); // Reset percobaan login
+
+            // Regenerasi sesi
+            $request->session()->regenerate();
+
+            // Jika kamu ingin menyimpan nama user ke sesi, bisa seperti ini (sesuai kolom 'name' di model User)
+            $request->session()->put([
+                'userid' => Auth::id(), // ID user yang sedang login
+                'name' => Auth::user()->name, // Nama user
+                'email' => Auth::user()->email, // Email user
+            ]);
+
+            // Redirect ke halaman setelah login berhasil (misal: dashboard)
+            return redirect()->route('dashboard'); 
+
+        } else {
+            // Jika login gagal, tambahkan hit ke RateLimiter
+            RateLimiter::hit($key, 60); // Tambah percobaan, reset setelah 60 detik
+
+            // Redirect kembali dengan pesan error
+            return redirect()->back()->withInput($request->only('email'))
+                                     ->with('gagal', 'Email atau password anda salah.');
+        }
     }
 
-    public function register(Request $request)
+    // Logout method
+    public function logout(Request $request) // Mengganti nama method jika ini memang untuk logout umum atau biarkan logout sesuai dengan konteks sebelumnya
     {
-        $response = Http::post("http://127.0.0.1:8000/api/register", [
-            'name' => $request->name,
-            'password' => $request->password,
-            'isAdmin' => false,
-        ]);
+        Auth::logout(); // Logout user yang sedang login
 
-        if ($response->ok()) {
-            return redirect()->route('login.form')->with('success', 'Registration successful! Please log in.');
-        }
+        // Invalidate the session
+        $request->session()->invalidate();
 
-        return back()->withErrors(['Registration failed.']);
+        // Regenerate the CSRF token to prevent session fixation
+        $request->session()->regenerateToken();
+
+        // Redirect ke halaman login dengan pesan sukses
+        return redirect()->route('login')->with('success', 'Anda telah berhasil keluar.');
     }
 }
