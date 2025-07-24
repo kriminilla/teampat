@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ProdukController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 
@@ -19,3 +20,5 @@ Route::post('/register', [AuthController::class, 'register'])->name('register');
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->name('dashboard');
+
+Route::get('/products/detail', [ProdukController::class, 'showProductDetailView'])->name('products.detail');
