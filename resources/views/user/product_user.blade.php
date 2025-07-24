@@ -1,4 +1,3 @@
-View/user/product_user.blade.php
 <!DOCTYPE html>
 <html lang="en">
 
@@ -33,7 +32,7 @@ View/user/product_user.blade.php
                 @auth
                 <div class="flex items-center space-x-4">
                     <!-- Tombol Profil -->
-                    <a href="{{ route('dashboard') }}" class="flex items-center gap-2 text-sm text-gray-700 hover:text-blue-600 transition">
+                    <a href="{{ route('products') }}" class="flex items-center gap-2 text-sm text-gray-700 hover:text-blue-600 transition">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                             stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                             <path stroke-linecap="round" stroke-linejoin="round"
@@ -45,12 +44,14 @@ View/user/product_user.blade.php
                     </a>
 
                     <!-- Tombol Logout -->
-                    <form method="POST" action="#">
-                        @csrf
+                    <a href="{{ route('logout') }}">
                         <button type="submit"
                             class="text-sm bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition">
                             Logout
                         </button>
+                    </a>
+                    <form method="POST" action="">
+                        @csrf
                     </form>
                 </div>
                 @endauth
@@ -69,7 +70,7 @@ View/user/product_user.blade.php
             </p>
 
             <!-- Search Bar -->
-            <form action="{{ route('dashboard') }}" method="GET" class="max-w-lg mx-auto flex items-center bg-gray-100 rounded-full overflow-hidden">
+            <form action="{{ route('products') }}" method="GET" class="max-w-lg mx-auto flex items-center bg-gray-100 rounded-full overflow-hidden">
                 <input
                     type="text"
                     name="query"
@@ -132,11 +133,6 @@ View/user/product_user.blade.php
 </body>
 </html>
 
-
-
-Web.php 
-// User Route
-Route::get('/products', [UserController::class, 'produkuser'])->name('products');
 
 
 

@@ -73,9 +73,9 @@ class AuthController extends Controller
 
             // Arahkan berdasarkan role
             if (Auth::user()->role === 'admin') {
-                return redirect()->route('indexAdmin'); // Buat route ini
+                return redirect()->route('produk'); // Buat route ini
             } else {
-                return redirect()->route('indexUser'); // Untuk user biasa
+                return redirect()->route('products'); // Untuk user biasa
             }
         } else {
             // Jika login gagal, tambahkan hit ke RateLimiter

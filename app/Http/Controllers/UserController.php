@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Product;
+use App\Models\Produk;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
@@ -12,7 +13,7 @@ class UserController extends Controller
     {
         $query = $request->input('query');
 
-        $produks = Product::with('kategori')
+        $produks = Produk::with('kategori')
             ->when($query, function ($q) use ($query) {
                 $q->where('nama', 'like', '%' . $query . '%');
             })

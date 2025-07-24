@@ -29,7 +29,7 @@
                             <td>{{ $key + 1 }}</td>
                             <td>{{ $data->nama }}</td>
                             <td>{{ $data->deskripsi }}</td>
-                            <td>{{ $data->kategori-> }}</td>
+                            <td>{{ $data->kategori }}</td>
                             <td>{{ number_format($data->harga,0,',','.') }}</td>
                             <td>
                                 @if ($data->gambar)

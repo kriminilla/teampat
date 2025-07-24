@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Produk;
 use App\Models\Kategori;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 class AdminController extends Controller
@@ -14,6 +15,9 @@ class AdminController extends Controller
      */
     public function index()
     {
+        if (!Auth::check() || Auth::user()->role !== 'admin') {
+            abort(403); // Akses ditolak
+        }
         $produk = Produk::with('kategori')->get();
         $kategori = Kategori::all();
         return view('admin.product', compact('produk', 'kategori'));
@@ -82,6 +86,9 @@ class AdminController extends Controller
 
     public function indexKategori()
     {
+        if (!Auth::check() || Auth::user()->role !== 'admin') {
+            abort(403); // Akses ditolak
+        }
         $kategori = Kategori::all();
         return view('admin.kategori', compact('kategori'));
     }
