@@ -21,7 +21,7 @@ Route::post('/registered', [AuthController::class, 'register'])->name('register'
 Route::get('/dashboard-admin', [AuthController::class, 'indexAdmin'])->name('indexAdmin');
 Route::get('/dashboard', [AuthController::class, 'indexUser'])->name('indexUser');
 Route::get('/products', [UserController::class, 'produkuser'])->name('products');
-Route::get('/products/detail', [ProdukController::class, 'showProductDetailView'])->name('products.detail');
+Route::get('/products/{produk}', [ProdukController::class, 'showProductDetailView'])->name('products.detail');
 
 Route::get('/admin/produk', [AdminController::class, 'index'])->name('produk');
 Route::put('/admin/produk/update/{produk}', [AdminController::class, 'update'])->name('updateProduk');

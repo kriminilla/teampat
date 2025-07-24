@@ -111,7 +111,7 @@
                         <p class="text-blue-600 text-base font-bold mt-2">
                             Rp {{ number_format($produk->harga, 0, ',', '.') }}
                         </p>
-                        <a href="/produk/{{ $produk->id }}"
+                        <a href="/products/{{ $produk->id }}"
                             class="mt-4 bg-blue-600 text-white text-sm px-4 py-2 rounded-md text-center hover:bg-blue-700 transition">
                             Lihat Detail
                         </a>

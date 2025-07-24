@@ -3,7 +3,7 @@
 @section('title', 'Detail Product')
 
 @section('content')
-    <div class="bg-stone-50 py-8">
+    <div class="bg-stone-50 py-8 min-h-screen">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex flex-col md:flex-row -mx-4">
                 <div class="md:flex-1 px-4">

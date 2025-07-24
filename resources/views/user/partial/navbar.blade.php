@@ -1,4 +1,5 @@
-<nav class="bg-white shadow-sm border-b border-gray-200">
+<!-- Navbar -->
+    <nav class="bg-white shadow-sm border-b border-gray-200">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16 items-center">
                 <!-- Logo -->
@@ -19,7 +20,7 @@
                 @auth
                 <div class="flex items-center space-x-4">
                     <!-- Tombol Profil -->
-                    <a href="{{ route('dashboard') }}" class="flex items-center gap-2 text-sm text-gray-700 hover:text-blue-600 transition">
+                    <a href="{{ route('products') }}" class="flex items-center gap-2 text-sm text-gray-700 hover:text-blue-600 transition">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                             stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                             <path stroke-linecap="round" stroke-linejoin="round"
@@ -31,12 +32,14 @@
                     </a>
 
                     <!-- Tombol Logout -->
-                    <form method="POST" action="#">
-                        @csrf
+                    <a href="{{ route('logout') }}">
                         <button type="submit"
                             class="text-sm bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition">
                             Logout
                         </button>
+                    </a>
+                    <form method="POST" action="">
+                        @csrf
                     </form>
                 </div>
                 @endauth
