@@ -3,118 +3,162 @@
 @section('title', 'Product')
 
 @section('content')
-    <form id="formCancel" method="POST" action="{{ route('upapkk.unverifSelected') }}">
-        @csrf
-        <div class="card">
-            <div class="card-header d-flex justify-content-between">
-                <div class="col-sm-6">
-                    <h3 class="m-0">Daftar Produk</h3>
-                </div>
+    <div class="card">
+        <div class="card-header d-flex justify-content-between">
+            <div class="col-sm-6">
+                <h3 class="m-0">Daftar Produk</h3>
             </div>
-            <div class="card-body">
-                <table id="example1" class="table table-bordered table-striped">
-                    <thead>
+        </div>
+        <div class="card-body">
+            <button class="btn btn-primary mb-3" data-toggle="modal" data-target="#addModal">+ Tambah Produk</button>
+            <table id="example2" class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Nama Produk</th>
+                        <th>Deskripsi</th>
+                        <th>Kategori</th>
+                        <th>Harga</th>
+                        <th>Gambar</th>
+                        <th style="text-align: center;">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($produk as $key => $data)
                         <tr>
-                            <th>No</th>
-                            <th>Nama Produk</th>
-                            <th>Deskripsi</th>
-                            <th>Harga</th>
-                            <th>Gambar</th>
-                            <th style="text-align: center;">Aksi</th>
+                            <td>{{ $key + 1 }}</td>
+                            <td>{{ $data->nama }}</td>
+                            <td>{{ $data->deskripsi }}</td>
+                            <td>{{ $data->kategori }}</td>
+                            <td>{{ number_format($data->harga,0,',','.') }}</td>
+                            <td>
+                                @if ($data->gambar)
+                                    <img src="{{ asset('storage/' . $data->gambar) }}" width="50">
+                                @endif
+                            </td>
+                            <td style="text-align: center; vertical-align: middle;">
+                                <button class="btn btn-warning" data-toggle="modal" data-target="#editModal{{ $data->id }}"><i class="fa fa-pen"></i></button>
+                                    <form action="{{ route('destroyProduk', $data->id) }}" method="POST"
+                                        style="display:inline;">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-danger btn-delete"><i
+                                                class="fa fa-trash"></i></button>
+                                    </form>
+                            </td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        {{-- @foreach ($kegiatan as $key => $data)
-                            <tr>
-                                <td>{{ $key + 1 }}</td>
-                                <td>{{ $data->mahasiswa->nim }}</td>
-                                <td>{{ $data->nama_kegiatan }}</td>
-                                <td>{{ \Carbon\Carbon::parse($data->tanggal_kegiatan)->translatedFormat('d F Y') }}</td>
-                                <td>
-                                    @if ($data->status_sertif === 'true')
-                                        <span class="badge badge-success">Terverifikasi</span>
-                                    @else
-                                        <span class="badge badge-danger">Belum Terverifikasi</span>
-                                    @endif
-                                </td>
-                                <td>{{ $data->akurasi.'%' }}</td>
-                                <td style="text-align: center; vertical-align: middle;">
-                                    <input type="checkbox" name="selected_kegiatan[]" value="{{ $data->id }}">
-                                    <button style="border:none; background-color:transparent;" type="button" class="fas fa-eye" data-toggle="modal" data-target="#editModal{{ $data->id }}">
-                                </td>
-                            </tr>
 
-                            <div class="modal fade" id="editModal{{ $data->id }}" tabindex="-1" role="dialog">
-                                <div class="modal-dialog" role="document">
-                                    <div class="modal-content">
+                        <div class="modal fade" id="editModal{{ $data->id }}" tabindex="-1"
+                            aria-labelledby="editModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+                                    <form action="{{ route('updateProduk', $data->id) }}" method="POST"
+                                        enctype="multipart/form-data">
+                                        @csrf
+                                        @method('PUT')
                                         <div class="modal-header">
-                                            <h5 class="modal-title">Detail Kegiatan</h5>
-                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                            <h3 class="modal-title" id="editModalLabel">Edit Produk</h3>
                                         </div>
                                         <div class="modal-body">
-                                            <div class="form-group">
-                                                <label>Nama Kegiatan <i>(Versi Indonesia)</i></label>
-                                                <input class="form-control" value="{{ $data->nama_kegiatan }}" disabled style="background-color: white;">
+                                            <div class="mb-3">
+                                                <label for="nama" class="form-label">Nama</label>
+                                                <input type="text" class="form-control" id="nama" name="nama"
+                                                    value="{{ $data->nama }}">
                                             </div>
-                                            <div class="form-group">
-                                                <label>Activity Name <i>(English Version)</i></label>
-                                                <input class="form-control" value="{{ $data->kegiatan_name }}" disabled style="background-color: white;">
+                                            <div class="mb-3">
+                                                <label for="deskripsi" class="form-label">Deskripsi</label>
+                                                <input type="text" class="form-control" id="deskripsi" name="deskripsi"
+                                                    value="{{ $data->deskripsi }}">
                                             </div>
-                                            <div class="form-group">
-                                                <label>Tanggal Kegiatan</label>
-                                                <input class="form-control"
-                                                    value="{{ \Carbon\Carbon::parse($data->tanggal_kegiatan)->translatedFormat('d F Y') }}"
-                                                    disabled style="background-color: white">
+                                            <div class="mb-3">
+                                                <label for="harga" class="form-label">Harga</label>
+                                                <input type="number" class="form-control" id="harga" name="harga"
+                                                    value="{{ $data->harga }}">
                                             </div>
-                                            <div class="form-group">
-                                                <label>Posisi</label>
-                                                <input class="form-control" value="{{ $data->poin->posisi->nama_posisi }}"
-                                                    disabled style="background-color: white">
+                                            <div class="mb-3">
+                                                <label for="kategori_id" class="form-label">Kategori</label>
+                                                <select name="kategori_id" id="kategori_id" class="form-control">
+                                                    <option value="">-- Pilih Kategori --</option>
+                                                    @foreach ($kategori as $ktg)
+                                                        <option value="{{ $ktg->id }}"
+                                                            {{ $ktg->id == $data->kategori_id ? 'selected' : '' }}>
+                                                            {{ $ktg->nama }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
                                             </div>
-                                            <div class="form-group">
-                                                <label>Jenis Kegiatan</label>
-                                                <input class="form-control"
-                                                    value="{{ $data->poin->jenisKegiatan->jenis_kegiatan }}" disabled style="background-color: white">
-                                            </div>
-                                            <div class="form-group">
-                                                <label>Tingkat Kegiatan</label>
-                                                <input class="form-control"
-                                                    value="{{ $data->poin->tingkatKegiatan->tingkat_kegiatan }}" disabled style="background-color: white">
-                                            </div>
-                                            <div class="form-group">
-                                                <label>Poin</label>
-                                                <input class="form-control" value="{{ $data->poin->poin }}" disabled style="background-color: white">
-                                            </div>
-                                            <div class="form-group">
-                                                <label>Status Sertifikat</label>
-                                                <input class="form-control"
-                                                    value="{{ $data->verifsertif === 'true' ? 'Terverifikasi' : 'Belum Terverifikasi' }}"
-                                                    disabled style="background-color: white">
-                                            </div>
-                                            <div class="form-group">
-                                                <label>Akurasi</label>
-                                                <input class="form-control" value="{{ $data->akurasi.'%' }}" disabled style="background-color: white">
-                                            </div>
-                                            <div class="form-group">
-                                                <label>Sertifikat</label>
-                                                <div class="text-center mt-3">
-                                                    <img src="{{ '/storage/'.($data->sertifikat) }}" alt="Tidak Dapat Menampilkan Sertifikat" class="img-fluid rounded" style="max-width: 100%; height: auto;">
-                                                </div>
+
+                                            <div class="mb-3">
+                                                <label for="gambar" class="form-label">Upload
+                                                    Gambar</label><br />
+                                                <!-- Pratinjau Gambar -->
+                                                <img src="{{ '/storage/' . $data->gambar }}"
+                                                    alt="Tidak Dapat Menampilkan Gambar" class="img-fluid rounded"
+                                                    style="max-width: 100%; height: auto;">
+                                                <input type="file" id="gambar" name="gambar"
+                                                    class="form-control-file" accept=".pdf,.jpg,.jpeg,.png">
                                             </div>
                                         </div>
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-secondary"
                                                 data-dismiss="modal">Tutup</button>
+                                            <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
                                         </div>
-                                    </div>
+                                    </form>
                                 </div>
                             </div>
-                        @endforeach --}}
-                    </tbody>
-                </table>
+                        </div>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+
+        <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <form action="{{ route('storeProduk') }}" method="POST" enctype="multipart/form-data">
+                        @csrf
+                        <div class="modal-header">
+                            <h3 class="modal-title" id="editModalLabel">Tambah Produk</h3>
+                        </div>
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label for="nama" class="form-label">Nama</label>
+                                <input type="text" class="form-control" id="nama" name="nama">
+                            </div>
+                            <div class="mb-3">
+                                <label for="deskripsi" class="form-label">Deskripsi</label>
+                                <input type="text" class="form-control" id="deskripsi" name="deskripsi">
+                            </div>
+                            <div class="mb-3">
+                                <label for="harga" class="form-label">Harga</label>
+                                <input type="number" class="form-control" id="harga" name="harga">
+                            </div>
+                            <div class="mb-3">
+                                <label for="kategori_id" class="form-label">Kategori</label>
+                                <select name="kategori_id" id="kategori_id" class="form-control">
+                                    <option value="">-- Pilih Kategori --</option>
+                                    @foreach ($kategori as $ktg)
+                                        <option value="{{ $ktg->id }}">
+                                            {{ $ktg->nama }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="gambar" class="form-label">Upload Gambar</label><br />
+                                <input type="file" id="gambar" name="gambar" class="form-control-file"
+                                    accept=".pdf,.jpg,.jpeg,.png">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                            <button type="submit" class="btn btn-primary">Simpan</button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-    </div>
-</form>
 @endsection
