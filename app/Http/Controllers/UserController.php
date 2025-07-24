@@ -1,0 +1,23 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Http\Controllers\Controller;
+use App\Models\Product;
+use Illuminate\Http\Request;
+
+class UserController extends Controller
+{
+    public function produkuser(Request $request)
+    {
+        $query = $request->input('query');
+
+        $produks = Product::with('kategori')
+            ->when($query, function ($q) use ($query) {
+                $q->where('nama', 'like', '%' . $query . '%');
+            })
+            ->get();
+
+        return view('user.product_user', compact('produks', 'query'));
+    }
+}
