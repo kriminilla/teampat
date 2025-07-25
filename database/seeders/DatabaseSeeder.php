@@ -14,7 +14,7 @@ class DatabaseSeeder extends Seeder
 {
     $this->call([
         KategoriSeeder::class,
-        ProductSeeder::class, // baru jalan setelah kategori ada
+        ProductSeeder::class, 
     ]);
 }
 
