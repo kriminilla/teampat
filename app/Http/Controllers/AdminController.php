@@ -28,6 +28,8 @@ class AdminController extends Controller
      */
     public function store(Request $request)
     {
+        $this->authorize('create', Produk::class);
+
         $validated = $request->validate([
             'nama' => 'required|string|max:255',
             'deskripsi' => 'nullable|string',
@@ -42,7 +44,7 @@ class AdminController extends Controller
 
         Produk::create($validated);
 
-        return redirect()->route('produk')->with('success', 'Produk berhasil ditambahkan.');
+        return redirect()->route('produk');
     }
 
     /**
@@ -50,6 +52,9 @@ class AdminController extends Controller
      */
     public function update(Request $request, Produk $produk)
     {
+
+        $this->authorize('update', $produk);
+
         $validated = $request->validate([
             'nama' => 'required|string|max:255',
             'deskripsi' => 'nullable|string',
@@ -67,7 +72,7 @@ class AdminController extends Controller
 
         $produk->update($validated);
 
-        return redirect()->route('produk')->with('success', 'Produk berhasil diupdate.');
+        return redirect()->route('produk');
     }
 
     /**
@@ -75,13 +80,15 @@ class AdminController extends Controller
      */
     public function destroy(Produk $produk)
     {
+        $this->authorize('delete', $produk);
+
         if ($produk->gambar) {
             Storage::disk('public')->delete($produk->gambar);
         }
 
         $produk->delete();
 
-        return redirect()->route('produk')->with('success', 'Produk berhasil dihapus.');
+        return redirect()->route('produk');
     }
 
     public function indexKategori()
@@ -98,6 +105,8 @@ class AdminController extends Controller
      */
     public function storeKategori(Request $request)
     {
+        $this->authorize('create', Kategori::class);
+
         $validated = $request->validate([
             'nama' => 'required|string|max:255'
         ]);
@@ -112,6 +121,8 @@ class AdminController extends Controller
      */
     public function updateKategori(Request $request, Kategori $kategori)
     {
+        $this->authorize('update', $kategori);
+
         $validated = $request->validate([
             'nama' => 'required|string|max:255'
         ]);
@@ -126,6 +137,8 @@ class AdminController extends Controller
      */
     public function destroyKategori(Kategori $kategori)
     {
+        $this->authorize('delete', $kategori);
+
         $kategori->delete();
 
         return redirect()->route('kategori');
