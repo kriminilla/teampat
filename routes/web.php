@@ -8,7 +8,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ProfileController;
 
 Route::get('/', function () {
-    return redirect()->route('login.form'); // <- redirect to your login
+    return redirect()->route('products'); // <- redirect to your login
 });
 
 // Autentikasi

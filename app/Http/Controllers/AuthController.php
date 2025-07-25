@@ -13,7 +13,7 @@ class AuthController extends Controller
 {
     public function showLoginForm()
     {
-        return view('login'); 
+        return view('login');
     }
 
     public function indexAdmin()
@@ -120,6 +120,6 @@ class AuthController extends Controller
         $request->session()->regenerateToken();
 
         // Redirect ke halaman login dengan pesan sukses
-        return redirect()->route('login.form')->with('success', 'Anda telah berhasil keluar.');
+        return redirect()->route('products')->with('success', 'Anda telah berhasil keluar.');
     }
 }
