@@ -12,6 +12,7 @@ class UserController extends Controller
     public function produkuser(Request $request)
     {
         $query = $request->input('query');
+        
 
         $produks = Produk::with('kategori')
             ->when($query, function ($q) use ($query) {

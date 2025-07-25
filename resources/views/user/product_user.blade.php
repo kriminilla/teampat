@@ -40,7 +40,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round"
                                 d="M4.5 20.25a8.25 8.25 0 0115 0" />
                         </svg>
-                        <span>Profil</span>
+                        <span>{{ Auth::user()->name }}</span>
                     </a>
 
                     <!-- Tombol Logout -->
